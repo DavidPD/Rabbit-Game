@@ -7,10 +7,19 @@ fn main() {
     let max_turns = 1000;
     let upper_bound = 10;
 
-    play_game::<RandoAlgo>(upper_bound, max_turns);
+    let mut wins = 0;
+
+    for _ in 0..100 {
+        let win = play_game::<OffsetSweep>(upper_bound, max_turns).did_win;
+        if win {
+            wins += 1;
+        }
+    }
+
+    println!("Wins: {}", wins);
 }
 
-fn play_game<T: HuntingAlgorithm>(upper_bound: i32, max_turns: i32)
+fn play_game<T: HuntingAlgorithm>(upper_bound: i32, max_turns: i32) -> GameResult
 {
     let hunter = T::new();
 
@@ -22,6 +31,8 @@ fn play_game<T: HuntingAlgorithm>(upper_bound: i32, max_turns: i32)
     } else {
         println!("You lost despite being given {} turns.", result.num_turns);
     }
+
+    result
 }
 
 struct RandoAlgo;
@@ -53,5 +64,30 @@ impl HuntingAlgorithm for SweepAlgo {
 
     fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
         Box::new(SweepAlgo { current_position: 0 })
+    }
+}
+
+struct OffsetSweep {
+    current_position: i32,
+    start_even: bool,
+}
+
+impl HuntingAlgorithm for OffsetSweep {
+    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
+        let check = self.current_position;
+        self.current_position += 1;
+        if self.current_position >= upper_bound {
+            if self.start_even {
+                self.current_position = 0;
+            } else {
+                self.current_position = 1;
+            }
+            self.start_even = !self.start_even;
+        }
+        return check;
+    }
+
+    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
+        Box::new(OffsetSweep { current_position: 0, start_even: true})
     }
 }
