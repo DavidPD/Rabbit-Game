@@ -3,6 +3,8 @@ use rand::prelude::*;
 pub trait HuntingAlgorithm
 {
   fn check(&mut self, upper_bound: i32, rng: &mut ThreadRng) -> i32;
+
+  fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized;
 }
 
 pub struct GameRunner
