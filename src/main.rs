@@ -4,8 +4,8 @@ mod game_runner;
 use game_runner::*;
 
 fn main() {
-    let max_turns = 100000;
     let upper_bound = 10000;
+    let max_turns = upper_bound * 3;
 
     let mut wins = 0;
     let mut results: Vec<i32> = vec!();
@@ -23,7 +23,8 @@ fn main() {
     }
 
     println!("Wins: {}", wins);
-    println!("Average Turns: {}", results.iter().sum::<i32>() / num_games)
+    let average = results.iter().sum::<i32>() / results.len() as i32;
+    println!("Average Turns: {}", average)
 }
 
 fn play_game<T: HuntingAlgorithm>(upper_bound: i32, max_turns: i32) -> GameResult
