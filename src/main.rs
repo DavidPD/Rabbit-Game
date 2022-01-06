@@ -4,15 +4,17 @@ mod game_runner;
 use game_runner::*;
 
 fn main() {
-    let upper_bound = 100;
-    let max_turns = upper_bound * 3;
-
     let mut wins = 0;
     let mut results: Vec<i32> = vec!();
 
-    let num_games = 1000;
+    let num_games = 10000;
+
+    let mut rng = thread_rng();
 
     for _ in 0..num_games {
+        let upper_bound = rng.gen_range(10..100);
+        let max_turns = upper_bound * 3;
+
         let result = play_game::<ConditionalDoubleCheckMax>(upper_bound, max_turns);
         let win = result.did_win;
         results.push(result.num_turns);

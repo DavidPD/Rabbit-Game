@@ -55,7 +55,7 @@ impl GameRunner
     let mut won = false;
     let mut turn = 0;
 
-    println!("Starting game from {}", self.rabbit_position);
+    println!("Starting game from {} in range 0..{}", self.rabbit_position, self.upper_bound);
 
     while !won && turn < self.max_turns
     {
@@ -64,7 +64,7 @@ impl GameRunner
         let check = self.hunter.check(self.upper_bound, &mut self.rng);
         won = check == self.rabbit_position;
 
-        println!("Turn {}, the rabbit moved to {}, and you checked {}", turn, self.rabbit_position, check);
+        // println!("Turn {}, the rabbit moved to {}, and you checked {}", turn, self.rabbit_position, check);
     }
 
     GameResult {
