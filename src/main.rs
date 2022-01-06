@@ -4,16 +4,16 @@ mod game_runner;
 use game_runner::*;
 
 fn main() {
-    let upper_bound = 10000;
+    let upper_bound = 99;
     let max_turns = upper_bound * 3;
 
     let mut wins = 0;
     let mut results: Vec<i32> = vec!();
 
-    let num_games = 10;
+    let num_games = 1000;
 
     for _ in 0..num_games {
-        let result = play_game::<OffsetSweep>(upper_bound, max_turns);
+        let result = play_game::<DoubleCheckMax>(upper_bound, max_turns);
         let win = result.did_win;
         results.push(result.num_turns);
 
@@ -97,5 +97,58 @@ impl HuntingAlgorithm for OffsetSweep {
 
     fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
         Box::new(OffsetSweep { current_position: 0, start_even: true})
+    }
+}
+
+struct DoubleCheckZero {
+    current_position: i32,
+    has_repeated: bool,
+}
+
+impl HuntingAlgorithm for DoubleCheckZero {
+    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
+        let check = self.current_position;
+        if self.current_position >= upper_bound {
+            self.current_position = 0;
+            self.has_repeated = false;
+        }
+        else if self.current_position == 0 && !self.has_repeated {
+            self.current_position = 0;
+            self.has_repeated = true;
+        }
+        else {
+            self.current_position += 1;
+        }
+        return check;
+    }
+
+    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
+        Box::new(DoubleCheckZero { current_position: 0, has_repeated: true})
+    }
+}
+
+struct DoubleCheckMax {
+    current_position: i32,
+    has_repeated: bool,
+}
+
+impl HuntingAlgorithm for DoubleCheckMax {
+    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
+        let check = self.current_position;
+
+        if self.current_position >= upper_bound && self.has_repeated {
+            self.current_position = 0;
+            self.has_repeated = false;
+        } else if self.current_position >= upper_bound {
+            self.has_repeated = true;
+        } else {
+            self.current_position = self.current_position + 1;
+        }
+
+        return check;
+    }
+
+    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
+        Box::new(DoubleCheckMax { current_position: 0, has_repeated: false})
     }
 }

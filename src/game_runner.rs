@@ -33,6 +33,7 @@ impl GameRunner
       upper_bound,
       hunter,
       rabbit_position: rng.gen_range(0..upper_bound),
+      // rabbit_position: (0..upper_bound).filter(|i| i%2 != 0).into_iter().choose(&mut rng).unwrap(), // pick an even number
       rng: rng,
     }
   }
@@ -53,6 +54,8 @@ impl GameRunner
   {
     let mut won = false;
     let mut turn = 0;
+
+    println!("Starting game from {}", self.rabbit_position);
 
     while !won && turn < self.max_turns
     {
