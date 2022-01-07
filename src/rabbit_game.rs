@@ -1,5 +1,7 @@
 use rand::prelude::*;
 
+pub const LOWER_BOUND: i32 = 1;
+
 pub trait HuntingAlgorithm {
     fn check(&mut self, upper_bound: i32, rng: &mut ThreadRng) -> i32;
 
@@ -30,7 +32,7 @@ impl RabbitGame {
             max_turns,
             upper_bound,
             hunter,
-            rabbit_position: rng.gen_range(0..upper_bound),
+            rabbit_position: rng.gen_range(LOWER_BOUND..=upper_bound),
             // rabbit_position: (0..upper_bound).filter(|i| i%2 != 0).into_iter().choose(&mut rng).unwrap(), // pick an even number
             rng: rng,
         }
@@ -39,8 +41,8 @@ impl RabbitGame {
     pub fn step(&mut self) {
         self.rabbit_position = if self.rabbit_position == self.upper_bound {
             self.rabbit_position - 1
-        } else if self.rabbit_position == 0 {
-            1
+        } else if self.rabbit_position == LOWER_BOUND {
+            self.rabbit_position + 1
         } else {
             let direction = [1, -1].iter().choose(&mut self.rng).unwrap();
             self.rabbit_position + direction
@@ -60,6 +62,9 @@ impl RabbitGame {
             turn += 1;
             self.step();
             let check = self.hunter.check(self.upper_bound, &mut self.rng);
+
+            assert!(check >= LOWER_BOUND && check <= self.upper_bound);
+
             won = check == self.rabbit_position;
 
             // println!("Turn {}, the rabbit moved to {}, and you checked {}", turn, self.rabbit_position, check);

@@ -9,7 +9,7 @@ fn main() {
     let mut wins = 0;
     let mut results: Vec<i32> = vec![];
 
-    let num_games = 10000;
+    let num_games = 1000;
 
     let mut rng = thread_rng();
 
