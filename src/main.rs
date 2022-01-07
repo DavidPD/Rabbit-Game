@@ -1,11 +1,13 @@
 use rand::prelude::*;
 
-mod game_runner;
-use game_runner::*;
+mod rabbit_game;
+use rabbit_game::*;
+mod rabbit_catching_algorithms;
+use rabbit_catching_algorithms::*;
 
 fn main() {
     let mut wins = 0;
-    let mut results: Vec<i32> = vec!();
+    let mut results: Vec<i32> = vec![];
 
     let num_games = 10000;
 
@@ -29,11 +31,10 @@ fn main() {
     println!("Average Turns: {}", average)
 }
 
-fn play_game<T: HuntingAlgorithm>(upper_bound: i32, max_turns: i32) -> GameResult
-{
+fn play_game<T: HuntingAlgorithm>(upper_bound: i32, max_turns: i32) -> GameResult {
     let hunter = T::new();
 
-    let mut game = GameRunner::new(hunter, upper_bound, max_turns);
+    let mut game = RabbitGame::new(hunter, upper_bound, max_turns);
     let result = game.run();
 
     if result.did_win {
@@ -43,149 +44,4 @@ fn play_game<T: HuntingAlgorithm>(upper_bound: i32, max_turns: i32) -> GameResul
     }
 
     result
-}
-
-struct RandoAlgo;
-
-impl HuntingAlgorithm for RandoAlgo {
-
-    fn check(&mut self, upper_bound: i32, rng: &mut ThreadRng) -> i32 {
-        rng.gen_range(0..upper_bound)
-    }
-
-    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
-        Box::new(RandoAlgo {})
-    }
-}
-
-struct SweepAlgo {
-    current_position: i32,
-}
-
-impl HuntingAlgorithm for SweepAlgo {
-    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
-        let check = self.current_position;
-        self.current_position += 1;
-        if self.current_position >= upper_bound {
-            self.current_position = 0;
-        }
-        return check;
-    }
-
-    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
-        Box::new(SweepAlgo { current_position: 0 })
-    }
-}
-
-struct OffsetSweep {
-    current_position: i32,
-    start_even: bool,
-}
-
-impl HuntingAlgorithm for OffsetSweep {
-    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
-        let check = self.current_position;
-        self.current_position += 1;
-        if self.current_position >= upper_bound {
-            if self.start_even {
-                self.current_position = 0;
-            } else {
-                self.current_position = 1;
-            }
-            self.start_even = !self.start_even;
-        }
-        return check;
-    }
-
-    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
-        Box::new(OffsetSweep { current_position: 0, start_even: true})
-    }
-}
-
-struct DoubleCheckZero {
-    current_position: i32,
-    has_repeated: bool,
-}
-
-impl HuntingAlgorithm for DoubleCheckZero {
-    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
-        let check = self.current_position;
-        if self.current_position >= upper_bound {
-            self.current_position = 0;
-            self.has_repeated = false;
-        }
-        else if self.current_position == 0 && !self.has_repeated {
-            self.current_position = 0;
-            self.has_repeated = true;
-        }
-        else {
-            self.current_position += 1;
-        }
-        return check;
-    }
-
-    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
-        Box::new(DoubleCheckZero { current_position: 0, has_repeated: true})
-    }
-}
-
-struct DoubleCheckMax {
-    current_position: i32,
-    has_repeated: bool,
-}
-
-impl HuntingAlgorithm for DoubleCheckMax {
-    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
-        let check = self.current_position;
-
-        if self.current_position >= upper_bound && self.has_repeated {
-            self.current_position = 0;
-            self.has_repeated = false;
-        } else if self.current_position >= upper_bound {
-            self.has_repeated = true;
-        } else {
-            self.current_position = self.current_position + 1;
-        }
-
-        return check;
-    }
-
-    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
-        Box::new(DoubleCheckMax { current_position: 0, has_repeated: false})
-    }
-}
-
-struct ConditionalDoubleCheckMax {
-    current_position: i32,
-    has_repeated: bool,
-}
-
-impl HuntingAlgorithm for ConditionalDoubleCheckMax {
-    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
-        let check = self.current_position;
-        let upper_is_even = upper_bound%2 == 0;
-
-        if upper_is_even {
-            if self.current_position >= upper_bound {
-                self.current_position = 0;
-            } else {
-                self.current_position = self.current_position + 1;
-            }
-        } else {
-            if self.current_position >= upper_bound && self.has_repeated {
-                self.current_position = 0;
-                self.has_repeated = false;
-            } else if self.current_position >= upper_bound {
-                self.has_repeated = true;
-            } else {
-                self.current_position = self.current_position + 1;
-            }
-        }
-
-        return check;
-    }
-
-    fn new() -> Box<dyn HuntingAlgorithm> where Self: Sized {
-        Box::new(ConditionalDoubleCheckMax { current_position: 0, has_repeated: false})
-    }
 }
