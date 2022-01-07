@@ -9,11 +9,11 @@ impl HuntingAlgorithm for RandoAlgo {
         rng.gen_range(LOWER_BOUND..=upper_bound)
     }
 
-    fn new() -> Box<dyn HuntingAlgorithm>
+    fn new() -> Self
     where
         Self: Sized,
     {
-        Box::new(RandoAlgo {})
+        RandoAlgo {}
     }
 }
 
@@ -33,13 +33,13 @@ impl HuntingAlgorithm for SweepAlgo {
         return check;
     }
 
-    fn new() -> Box<dyn HuntingAlgorithm>
+    fn new() -> Self
     where
         Self: Sized,
     {
-        Box::new(SweepAlgo {
+        SweepAlgo {
             current_position: LOWER_BOUND,
-        })
+        }
     }
 }
 
@@ -63,14 +63,14 @@ impl HuntingAlgorithm for OffsetSweep {
         return check;
     }
 
-    fn new() -> Box<dyn HuntingAlgorithm>
+    fn new() -> Self
     where
         Self: Sized,
     {
-        Box::new(OffsetSweep {
+        OffsetSweep {
             current_position: LOWER_BOUND,
             start_low: true,
-        })
+        }
     }
 }
 
@@ -94,14 +94,14 @@ impl HuntingAlgorithm for DoubleCheckZero {
         return check;
     }
 
-    fn new() -> Box<dyn HuntingAlgorithm>
+    fn new() -> Self
     where
         Self: Sized,
     {
-        Box::new(DoubleCheckZero {
+        DoubleCheckZero {
             current_position: LOWER_BOUND,
             has_repeated: true,
-        })
+        }
     }
 }
 
@@ -126,14 +126,14 @@ impl HuntingAlgorithm for DoubleCheckMax {
         return check;
     }
 
-    fn new() -> Box<dyn HuntingAlgorithm>
+    fn new() -> Self
     where
         Self: Sized,
     {
-        Box::new(DoubleCheckMax {
+        DoubleCheckMax {
             current_position: LOWER_BOUND,
             has_repeated: false,
-        })
+        }
     }
 }
 
@@ -167,13 +167,13 @@ impl HuntingAlgorithm for ConditionalDoubleCheckMax {
         return check;
     }
 
-    fn new() -> Box<dyn HuntingAlgorithm>
+    fn new() -> Self
     where
         Self: Sized,
     {
-        Box::new(ConditionalDoubleCheckMax {
+        ConditionalDoubleCheckMax {
             current_position: LOWER_BOUND,
             has_repeated: false,
-        })
+        }
     }
 }

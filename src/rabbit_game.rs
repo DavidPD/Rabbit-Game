@@ -5,15 +5,15 @@ pub const LOWER_BOUND: i32 = 1;
 pub trait HuntingAlgorithm {
     fn check(&mut self, upper_bound: i32, rng: &mut ThreadRng) -> i32;
 
-    fn new() -> Box<dyn HuntingAlgorithm>
+    fn new() -> Self
     where
         Self: Sized;
 }
 
-pub struct RabbitGame {
+pub struct RabbitGame<H: HuntingAlgorithm> {
     pub max_turns: i32,
     pub upper_bound: i32,
-    hunter: Box<dyn HuntingAlgorithm>,
+    hunter: H,
 
     rabbit_position: i32,
     rng: ThreadRng,
@@ -24,8 +24,8 @@ pub struct GameResult {
     pub num_turns: i32,
 }
 
-impl RabbitGame {
-    pub fn new(hunter: Box<dyn HuntingAlgorithm>, upper_bound: i32, max_turns: i32) -> RabbitGame {
+impl<H: HuntingAlgorithm> RabbitGame<H> {
+    pub fn new(hunter: H, upper_bound: i32, max_turns: i32) -> RabbitGame<H> {
         let mut rng = thread_rng();
 
         RabbitGame {
