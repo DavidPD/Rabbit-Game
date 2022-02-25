@@ -191,6 +191,8 @@ impl HuntingAlgorithm for ShortStop {
             return 2; // We will always catch the rabbit on turn 1 or 2.
         }
 
+        // We can stop short of the highest position since we check twice if the rabbit is on
+        // the highest spot it will jump to our current position the next turn.
         if self.current_position == upper_bound - 1 && self.direction == 1 {
             self.direction = -1
         } else {
