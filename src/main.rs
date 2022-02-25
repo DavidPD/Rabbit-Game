@@ -14,10 +14,10 @@ fn main() {
     let mut rng = thread_rng();
 
     for _ in 0..num_games {
-        let upper_bound = rng.gen_range(10..=100);
+        let upper_bound = rng.gen_range(2..=100);
         let max_turns = upper_bound * 2;
 
-        let result = play_game::<ConditionalDoubleCheckMax>(upper_bound, max_turns);
+        let result = play_game::<ShortStop>(upper_bound, max_turns);
         let win = result.did_win;
         results.push(result.num_turns);
 

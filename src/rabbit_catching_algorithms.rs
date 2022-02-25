@@ -177,3 +177,33 @@ impl HuntingAlgorithm for ConditionalDoubleCheckMax {
         }
     }
 }
+
+pub struct ShortStop {
+    current_position: i32,
+    direction: i32,
+}
+
+impl HuntingAlgorithm for ShortStop {
+    fn check(&mut self, upper_bound: i32, _rng: &mut ThreadRng) -> i32 {
+        let check = self.current_position;
+
+        if upper_bound == 2 || upper_bound == 3 {
+            return 2; // We will always catch the rabbit on turn 1 or 2.
+        }
+
+        if self.current_position == upper_bound - 1 && self.direction == 1 {
+            self.direction = -1
+        } else {
+            self.current_position += self.direction;
+        }
+
+        check
+    }
+
+    fn new() -> Self {
+        ShortStop {
+            current_position: LOWER_BOUND,
+            direction: 1,
+        }
+    }
+}
